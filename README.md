@@ -5,8 +5,8 @@ Ce projet vise à étudier les liens entre le niveau de richesse des régions de
 Méthodologie
 ### 1. Récupération et traitement des données
 Données utilisées :
-INSEE - PIB régional
-Agences régionales de santé (ARS) - Données financières des établissements de santé
+- INSEE - PIB régional par habitant
+- Agences régionales de santé (ARS) - Données financières des établissements de santé
 
 ### 2. Analyse descriptive
 Cette partie est dédiée aux statistiques descriptives afin de mieux décrire et visualiser nos données. On pourra étudier :
