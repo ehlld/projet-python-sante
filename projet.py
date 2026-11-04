@@ -1,190 +1,88 @@
 import pandas as pd
-import textwrap as tw
+
 
 def print_table(table):
     for row in table:
-        for column in row:
-            print(tw.wrap(column, width=15, placeholder="...")[0], end=", ")
-        print()
-
-insee_url = "https://www.insee.fr/fr/statistiques/fichier/8391986/PIB_REG_fr.xlsx"
-auvergne_url = "https://www.ars.sante.fr/media/161664/download?inline"
-pays_loire_url = "https://www.ars.sante.fr/media/161666/download?inline"
-bourgogne_url = "https://www.ars.sante.fr/media/161669/download?inline"
-bretagne_url = "https://www.ars.sante.fr/media/161667/download?inline"
-centre_loire_url = "https://www.ars.sante.fr/media/161668/download?inline"
-corse_url = "https://www.ars.sante.fr/media/161653/download?inline"
-grand_est_url = "https://www.ars.sante.fr/media/161652/download?inline"
-guadeloupe_url = "https://www.ars.sante.fr/media/161655/download?inline"
-guyane_url = "https://www.ars.sante.fr/media/161654/download?inline"
-nord_url = "https://www.ars.sante.fr/media/161656/download?inline"
-idf_url = "https://www.ars.sante.fr/media/161657/download?inline"
-reunion_url = "https://www.ars.sante.fr/media/161658/download?inline"
-martinique_url = "https://www.ars.sante.fr/media/161659/download?inline"
-mayotte_url = "https://www.ars.sante.fr/media/161661/download?inline"
-normandie_url = "https://www.ars.sante.fr/media/161660/download?inline"
-aquitaine_url = "https://www.ars.sante.fr/media/161663/download?inline"
-occitanie_url = "https://www.ars.sante.fr/media/161662/download?inline"
-paca_url = "https://www.ars.sante.fr/media/161665/download?inline"
-
-pib = pd.ExcelFile(insee_url)
-pib_2023 = pd.read_excel(
-    pib, "PIB par habitant", usecols="A,AI",
-    skiprows=[0, 1, 2, 3, 17, 18], skipfooter=9)
-pib_2023 = pd.DataFrame.to_csv(pib_2023, index=False, sep="?")
-# print(pib_2023)
+        formatted_row = [
+            str(value)[:7] + "..." if len(str(value)) > 10 else str(value)
+            for value in row
+        ]
+        print(" | ".join(formatted_row))
 
 
-line_of_url = [5, 6, 14, 22, 25, 31, 34, 39, 40, 42]
-auvergne_pib = pd.ExcelFile(auvergne_url)
-auvergne_financier = pd.read_excel(
-    auvergne_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-auvergne_financier = pd.DataFrame.to_csv(auvergne_financier, index=False, sep="?")
-# print(auvergne_financier)
-
-pays_loire_pib = pd.ExcelFile(pays_loire_url)
-pays_loire_financier = pd.read_excel(
-    pays_loire_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-pays_loire_financier = pd.DataFrame.to_csv(pays_loire_financier, index=False, sep="?")
-
-bourgogne_pib = pd.ExcelFile(bourgogne_url)
-bourgogne_financier = pd.read_excel(
-    bourgogne_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-bourgogne_financier = pd.DataFrame.to_csv(bourgogne_financier, index=False, sep="?")
-
-bretagne_pib = pd.ExcelFile(bretagne_url)
-bretagne_financier = pd.read_excel(
-    bretagne_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-bretagne_financier = pd.DataFrame.to_csv(bretagne_financier, index=False, sep="?")
-
-centre_loire_pib = pd.ExcelFile(centre_loire_url)
-centre_loire_financier = pd.read_excel(
-    centre_loire_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-centre_loire_financier = pd.DataFrame.to_csv(centre_loire_financier, index=False, sep="?")
-
-corse_pib = pd.ExcelFile(corse_url)
-corse_financier = pd.read_excel(
-    corse_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-corse_financier = pd.DataFrame.to_csv(corse_financier, index=False, sep="?")
-
-grand_est_pib = pd.ExcelFile(grand_est_url)
-grand_est_financier = pd.read_excel(
-    grand_est_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-grand_est_financier = pd.DataFrame.to_csv(grand_est_financier, index=False, sep="?")
-
-guadeloupe_pib = pd.ExcelFile(guadeloupe_url)
-guadeloupe_financier = pd.read_excel(
-    guadeloupe_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-guadeloupe_financier = pd.DataFrame.to_csv(guadeloupe_financier, index=False, sep="?")
-
-guyane_pib = pd.ExcelFile(guyane_url)
-guyane_financier = pd.read_excel(
-    guyane_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-guyane_financier = pd.DataFrame.to_csv(guyane_financier, index=False, sep="?")
-
-nord_pib = pd.ExcelFile(nord_url)
-nord_financier = pd.read_excel(
-    nord_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-nord_financier = pd.DataFrame.to_csv(nord_financier, index=False, sep="?")
-
-idf_pib = pd.ExcelFile(idf_url)
-idf_financier = pd.read_excel(
-    idf_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-idf_financier = pd.DataFrame.to_csv(idf_financier, index=False, sep="?")
-
-reunion_pib = pd.ExcelFile(reunion_url)
-reunion_financier = pd.read_excel(
-    reunion_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-reunion_financier = pd.DataFrame.to_csv(reunion_financier, index=False, sep="?")
-
-martinique_pib = pd.ExcelFile(martinique_url)
-martinique_financier = pd.read_excel(
-    martinique_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-martinique_financier = pd.DataFrame.to_csv(martinique_financier, index=False, sep="?")
-
-mayotte_pib = pd.ExcelFile(mayotte_url)
-mayotte_financier = pd.read_excel(
-    mayotte_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-mayotte_financier = pd.DataFrame.to_csv(mayotte_financier, index=False, sep="?")
-
-normandie_pib = pd.ExcelFile(normandie_url)
-normandie_financier = pd.read_excel(
-    normandie_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-normandie_financier = pd.DataFrame.to_csv(normandie_financier, index=False, sep="?")
-
-aquitaine_pib = pd.ExcelFile(aquitaine_url)
-aquitaine_financier = pd.read_excel(
-    aquitaine_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-aquitaine_financier = pd.DataFrame.to_csv(aquitaine_financier, index=False, sep="?")
-
-occitanie_pib = pd.ExcelFile(occitanie_url)
-occitanie_financier = pd.read_excel(
-    occitanie_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-occitanie_financier = pd.DataFrame.to_csv(occitanie_financier, index=False, sep="?")
-
-paca_pib = pd.ExcelFile(paca_url)
-paca_financier = pd.read_excel(
-    paca_pib, "Etat financier Financeur", usecols="D:F",
-    skiprows=lambda x: x not in line_of_url)
-paca_financier = pd.DataFrame.to_csv(paca_financier, index=False, sep="?")
-
-# print(paca_financier)
+def url_to_data(url):
+    line_of_url = [4, 5, 6, 14, 22, 25, 31, 34, 39, 40, 42]
+    pib_url = pd.ExcelFile(url)
+    pib_financier = pd.read_excel(
+        pib_url, "Etat financier Financeur", usecols="D:F",
+        skiprows=lambda x: x not in line_of_url)
+    return (pib_financier)
 
 
-tableau_regions = [
-    "Auvergne-Rhônes-Alpes", "Pays de la Loire", "Bourgogne-Franche-Comté", "Bretagne",
-    "Centre-Val de Loire", "Corse", "Grand Est", "Guadeloupe", "Guyane", "Hauts-de-France",
-    "Île-de-France", "La Réunion", "Martinique", "Mayotte", "Normandie",
-    "Nouvelle-Aquitaine", "Occitanie", "Provence-Alpes-Côte d'Azur"]
+def generate_etats_financiers_regionaux():
+    # insee_url = "https://www.insee.fr/fr/statistiques/fichier/8391986/PIB_REG_fr.xlsx"
+    auvergne_url = "https://www.ars.sante.fr/media/161664/download?inline"
+    pays_loire_url = "https://www.ars.sante.fr/media/161666/download?inline"
+    bourgogne_url = "https://www.ars.sante.fr/media/161669/download?inline"
+    bretagne_url = "https://www.ars.sante.fr/media/161667/download?inline"
+    centre_loire_url = "https://www.ars.sante.fr/media/161668/download?inline"
+    corse_url = "https://www.ars.sante.fr/media/161653/download?inline"
+    grand_est_url = "https://www.ars.sante.fr/media/161652/download?inline"
+    guadeloupe_url = "https://www.ars.sante.fr/media/161655/download?inline"
+    guyane_url = "https://www.ars.sante.fr/media/161654/download?inline"
+    nord_url = "https://www.ars.sante.fr/media/161656/download?inline"
+    idf_url = "https://www.ars.sante.fr/media/161657/download?inline"
+    reunion_url = "https://www.ars.sante.fr/media/161658/download?inline"
+    martinique_url = "https://www.ars.sante.fr/media/161659/download?inline"
+    mayotte_url = "https://www.ars.sante.fr/media/161661/download?inline"
+    normandie_url = "https://www.ars.sante.fr/media/161660/download?inline"
+    aquitaine_url = "https://www.ars.sante.fr/media/161663/download?inline"
+    occitanie_url = "https://www.ars.sante.fr/media/161662/download?inline"
+    paca_url = "https://www.ars.sante.fr/media/161665/download?inline"
 
-tableau_financier = [
-    auvergne_financier, pays_loire_financier, bourgogne_financier, bretagne_financier,
-    centre_loire_financier, corse_financier, grand_est_financier, guadeloupe_financier,
-    guyane_financier, nord_financier, idf_financier, reunion_financier, martinique_financier,
-    mayotte_financier, normandie_financier, aquitaine_financier, occitanie_financier,
-    paca_financier]
+    tableau_url = [
+        auvergne_url, pays_loire_url, bourgogne_url, bretagne_url,
+        centre_loire_url, corse_url, grand_est_url, guadeloupe_url,
+        guyane_url, nord_url, idf_url, reunion_url, martinique_url,
+        mayotte_url, normandie_url, aquitaine_url, occitanie_url,
+        paca_url]
 
-etats_financier_regionaux = []
-tableau_temporaire = ["Region"]
-# print(paca_financier.split("\n"))
-# print()
-for line in paca_financier.split("\n"):
-    if not line:
-        continue
-    titre = line.split("?")[0]
-    tableau_temporaire.append(titre)
-    tableau_temporaire.append(titre + " (%)")
-etats_financier_regionaux.append(tableau_temporaire)
-print(len(tableau_temporaire))
+    tableau_regions = [
+        "Auvergne-Rhônes-Alpes", "Pays de la Loire", "Bourgogne-Franche-Comté", "Bretagne",
+        "Centre-Val de Loire", "Corse", "Grand Est", "Guadeloupe", "Guyane", "Hauts-de-France",
+        "Île-de-France", "La Réunion", "Martinique", "Mayotte", "Normandie",
+        "Nouvelle-Aquitaine", "Occitanie", "Provence-Alpes-Côte d'Azur"]
 
-for i in range(len(tableau_regions)):
-    tableau_temporaire = [tableau_regions[i]]
-    for line in tableau_financier[i].split("\n"):
-        if not line:
-            continue
-        split = line.split("?")
-        print(split, "\n")
-        nombre = split[1]
-        nombre_pourcent = split[2]
-        tableau_temporaire.append(nombre)
-        tableau_temporaire.append(nombre_pourcent)
+    tableau_financier = []
+
+    # pib = pd.ExcelFile(insee_url)
+    # pib_2023 = pd.read_excel(
+    #     pib, "PIB par habitant", usecols="A,AI",
+    #     skiprows=[0, 1, 2, 3, 17, 18], skipfooter=9)
+
+    for i in range(len(tableau_url)):
+        tableau_financier.append(url_to_data(tableau_url[i]))
+
+    name_of_columns = tableau_financier[0].columns
+    etats_financier_regionaux = []
+    tableau_temporaire = ["Region"]
+    for name in tableau_financier[0][name_of_columns[0]]:
+        tableau_temporaire.append(name)
+        tableau_temporaire.append(name + " (en %)")
+
     etats_financier_regionaux.append(tableau_temporaire)
 
-print_table(etats_financier_regionaux)
+    for i in range(len(tableau_financier)):
+        tableau_temporaire = []
+        tableau_temporaire.append(tableau_regions[i])
+        for row in tableau_financier[i].itertuples(index=False, name=None):
+            tableau_temporaire.append(row[1])
+            tableau_temporaire.append(row[2])
+        etats_financier_regionaux.append(tableau_temporaire)
+
+    return (etats_financier_regionaux)
+
+
+if __name__ == "__main__":
+    # generate_etats_financiers_regionaux()
+    print_table(generate_etats_financiers_regionaux())
