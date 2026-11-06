@@ -86,3 +86,9 @@ def generate_etats_financiers_regionaux():
 if __name__ == "__main__":
     # generate_etats_financiers_regionaux()
     print_table(generate_etats_financiers_regionaux())
+
+
+def extract_pib_brut():
+    insee_url = "https://www.insee.fr/fr/statistiques/fichier/8391986/PIB_REG_fr.xlsx"
+    pib_brut = pd.read_excel(insee_url, sheet_name="PIB par habitant", header=None)
+    return pib_brut
