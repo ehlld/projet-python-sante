@@ -38,6 +38,15 @@ def prepare_pib_data(pib_brut):
     # Supprimer les 5 dernières lignes (notes et sources)
     pib = pib.iloc[:-5].copy()
 
+    # Renommer les régions Guadeloupe, Mayotte et Auvergne-Rhône-Alpes
+    pib["Région"] = pib["Région"].astype(str).str.strip()
+
+    # Harmoniser les noms des régions (avec la base de dbonnées des états financiers)
+    pib["Région"] = pib["Région"].replace({
+        "Guadeloupe (y compris Saint-Martin)": "Guadeloupe",
+        "Mayotte*": "Mayotte"
+    })
+ 
     return pib
 
 
