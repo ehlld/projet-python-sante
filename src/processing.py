@@ -35,6 +35,9 @@ def prepare_pib_data(pib_brut):
     for colonne in colonnes_annees:
         pib[colonne] = pd.to_numeric(pib[colonne], errors="coerce")
 
+    # Supprimer les 5 dernières lignes (notes et sources)
+    pib = pib.iloc[:-5].copy()
+
     return pib
 
 
@@ -63,8 +66,6 @@ def prepare_pib_map(pib_2023):
         "Territoire économique de la France"
     ]
 
-    pib_carte = pib_carte[
-        ~pib_carte["Région"].isin(regions_exclues)
-    ].copy()
+    pib_carte = pib_carte[~pib_carte["Région"].isin(regions_exclues)].copy()
 
     return pib_carte
