@@ -3,9 +3,7 @@ import numpy as np
 from projet import generate_etats_financiers_regionaux
 
 
-def trace_graph():
-    etats_financier = generate_etats_financiers_regionaux()
-
+def trace_graph(etats_financier):
     # Extract regions
     regions = [row[0] for row in etats_financier[1:]]
 
@@ -22,7 +20,6 @@ def trace_graph():
 
     # Unpack sorted data
     regions, dram, fir, decaissement = zip(*sorted_data)
-    print("Number of regions:", len(regions))
 
     x = np.arange(len(regions))
     width = 0.2
@@ -34,7 +31,7 @@ def trace_graph():
     ax.bar(
         x + 1*width, decaissement, width,
         label="DEPENSES DES REGIMES D'ASSURANCE MALADIE \
-        ET DE LA CAISSE NATIONALE DE SOLIDARITE POUR L'AUTONOMIE")
+ET DE LA CAISSE NATIONALE DE SOLIDARITE POUR L'AUTONOMIE")
 
     ax.set_xticks(x)
     ax.set_xticklabels(regions, rotation=45, ha="right")
@@ -46,11 +43,9 @@ def trace_graph():
     ax.grid(axis="y", alpha=0.3)
 
     fig.tight_layout()
-    print("Number of bars:", len(ax.patches))
     # Save before closing
-    fig.savefig("graphique_financier.png", dpi=300, bbox_inches="tight")
+    plt.show()
 
-    print("Graphique enregistré !")
     plt.close(fig)
 
 

@@ -4,7 +4,7 @@ import pandas as pd
 def print_table(table):
     for row in table:
         formatted_row = [
-            str(value)[:7] + "..." if len(str(value)) > 10 else str(value)
+            str(value)[:7] + "..." if len(str(value)) > 10 else str(value) + " " * (10 - len(str(value)))
             for value in row
         ]
         print(" | ".join(formatted_row))
@@ -19,8 +19,14 @@ def url_to_data(url):
     return (pib_financier)
 
 
+def extract_habitants_region():
+    url_region = "https://www.insee.fr/fr/statistiques/fichier/8680726/ensemble.xlsx"
+    Excel_habitants_region = pd.ExcelFile(url_region)
+    habitants_region = pd.read_excel(Excel_habitants_region, "Régions", usecols="B,G", skiprows=7)
+    return habitants_region
+
+
 def generate_etats_financiers_regionaux():
-    # insee_url = "https://www.insee.fr/fr/statistiques/fichier/8391986/PIB_REG_fr.xlsx"
     auvergne_url = "https://www.ars.sante.fr/media/161664/download?inline"
     pays_loire_url = "https://www.ars.sante.fr/media/161666/download?inline"
     bourgogne_url = "https://www.ars.sante.fr/media/161669/download?inline"
@@ -83,12 +89,13 @@ def generate_etats_financiers_regionaux():
     return (etats_financier_regionaux)
 
 
-if __name__ == "__main__":
-    # generate_etats_financiers_regionaux()
-    print_table(generate_etats_financiers_regionaux())
-
-
 def extract_pib_brut():
     insee_url = "https://www.insee.fr/fr/statistiques/fichier/8391986/PIB_REG_fr.xlsx"
     pib_brut = pd.read_excel(insee_url, sheet_name="PIB par habitant", header=None)
     return pib_brut
+
+
+if __name__ == "__main__":
+    # generate_etats_financiers_regionaux()
+    # print_table(generate_etats_financiers_regionaux())
+    print(extract_habitants_region())
