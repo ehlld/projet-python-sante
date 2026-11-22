@@ -39,6 +39,7 @@ def insee_pib():
     pib_region_brut = pib_region_brut.rename(columns={"Unnamed: 0": "Région"})
     pib_region_epure = pib_region_brut[["Région", "2023"]]
     pib_region_epure["Région"] = pib_region_epure["Région"].str.strip()
+    pib_region_epure = pib_region_epure.replace({"Guadeloupe (y compris Saint-Martin)": "Guadeloupe", "Mayotte*": "Mayotte"})
     pib_region_epure = pib_region_epure[pib_region_epure["Région"].isin(URL_REGIONS.keys())]
     return pib_region_epure
 
