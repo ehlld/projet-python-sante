@@ -1,4 +1,6 @@
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
 
 def prepare_pib_data(pib_brut):
 
@@ -61,7 +63,6 @@ def prepare_pib_map(pib_2023):
     pib_carte = pib_2023.copy()
 
     pib_carte["Région"] = pib_carte["Région"].str.strip()
-
     pib_carte["Région"] = pib_carte["Région"].replace({
         "Guadeloupe (y compris Saint-Martin)": "Guadeloupe",
         "Mayotte*": "Mayotte"
@@ -78,3 +79,15 @@ def prepare_pib_map(pib_2023):
     pib_carte = pib_carte[~pib_carte["Région"].isin(regions_exclues)].copy()
 
     return pib_carte
+
+
+def prepare_mco_data(mco):
+    # Sélection des variables utiles
+    variables = ["LIT_MCO", "JLI_MCO", "SEJHC_MCO", "JOU_MCO", "PLA_MCO", "SEJHP_MCO", "SEA_MCO"]
+    mco_selection = mco[variables].dropna()
+
+    # Standardisation des données
+    scaler = StandardScaler()
+    donnees = scaler.fit_transform(mco_selection)
+    mco_standardise = pd.DataFrame(donnees, columns=variables, index=mco_selection.index)
+    return mco_selection, mco_standardise
