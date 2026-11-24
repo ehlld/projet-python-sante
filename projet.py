@@ -27,6 +27,11 @@ URL_REGIONS = {
     "Provence-Alpes-Côte d'Azur": "https://www.ars.sante.fr/media/161665/download?inline",
 }
 
+URL_BASE_SAE = "data/SAE_2023/Liste_variables_SAE_2023.xlsx"
+
+URL_TAUX_PAUVRETE = "https://www.insee.fr/fr/statistiques/fichier/7941411/RPM2024-F21.xlsx"
+
+
 
 def insee_pib():
     url_pib_region = pd.ExcelFile(URL_PIB_REGIONS)
