@@ -32,7 +32,6 @@ URL_BASE_SAE = "data/SAE_2023/Liste_variables_SAE_2023.xlsx"
 URL_TAUX_PAUVRETE = "https://www.insee.fr/fr/statistiques/fichier/7941411/RPM2024-F21.xlsx"
 
 
-
 def insee_pib():
     url_pib_region = pd.ExcelFile(URL_PIB_REGIONS)
     pib_region_brut = pd.read_excel(
@@ -103,10 +102,9 @@ def generate_etats_financiers_regionaux():
 
     # return (etats_financier_regionaux)
 
-
-if __name__ == "__main__":
-    # generate_etats_financiers_regionaux()
-    print_table(generate_etats_financiers_regionaux())
+    #if __name__ == "__main__":
+    #   generate_etats_financiers_regionaux()
+    #   print_table(generate_etats_financiers_regionaux())
 
 
 def extract_pib_brut():
