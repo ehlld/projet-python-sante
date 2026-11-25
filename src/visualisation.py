@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 import numpy as np
 import textwrap
+from cartiflette import carti_download
 
 
 def plot_pib_regions(df):
@@ -18,11 +19,20 @@ def plot_pib_regions(df):
 
 def plot_carte_pib(pib_carte):
 
-    url = "https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/regions.geojson"
+    regions = carti_download(
+        values=["France"],
+        crs=4326,
+        borders="REGION",
+        vectorfile_format="geojson",
+        simplification=50,
+        filter_by="FRANCE_ENTIERE",
+        source="EXPRESS-COG-CARTO-TERRITOIRE",
+        year=2022
+    )
+    # Garder uniquement les régions métropolitaines pour une image plus grande
+    regions = regions[regions["INSEE_REG"] >= 11]
 
-    regions = gpd.read_file(url)
-
-    regions = regions.rename(columns={"nom": "Région"})
+    regions = regions.rename( columns={"LIBELLE_REGION": "Région"})
 
     carte = regions.merge(
         pib_carte,
@@ -31,7 +41,13 @@ def plot_carte_pib(pib_carte):
     )
 
     fig, ax = plt.subplots(figsize=(16, 16))
-    carte.plot(column="PIB_par_habitant", legend=True, ax=ax)
+
+    carte.plot(
+        column="PIB_par_habitant",
+        legend=True,
+        ax=ax
+    )
+
     ax.set_title("PIB par habitant par région en 2023")
     ax.axis("off")
 
@@ -113,3 +129,102 @@ def plot_etats_financiers(etats_financier):
 
     fig.tight_layout()
     plt.show()
+
+
+def visualiser_clusters_departements(mco_selection):
+    repartition_departements = mco_selection.groupby(
+        ["Departement", "Cluster"]
+    ).size().unstack(fill_value=0)
+
+    repartition_departements.plot(
+        kind="bar",
+        stacked=True,
+        figsize=(15, 6)
+    )
+
+    plt.title("Répartition des établissements par département et par cluster")
+    plt.xlabel("Département")
+    plt.ylabel("Nombre d'établissements")
+    plt.legend(title="Cluster")
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.show()
+
+
+def visualiser_clusters_carte(mco_selection):
+   
+    carte_departements = carti_download(
+        values=["France"],
+        crs=4326,
+        borders="DEPARTEMENT",
+        vectorfile_format="geojson",
+        simplification=50,
+        filter_by="FRANCE_ENTIERE",
+        source="EXPRESS-COG-CARTO-TERRITOIRE",
+        year=2022
+    )
+    repartition = mco_selection.groupby(
+        ["Departement", "Cluster"]
+    ).size().unstack(fill_value=0)
+
+    carte = carte_departements.merge(
+        repartition,
+        left_on="INSEE_DEP",
+        right_index=True,
+        how="left"
+    )
+
+    clusters = repartition.columns
+    carte[clusters] = carte[clusters].fillna(0)
+
+    # Séparer la métropole et les départements d'outre-mer
+    carte_metropole = carte[
+        ~carte["INSEE_DEP"].astype(str).str.startswith("97")
+    ]
+
+    carte_outremer = carte[
+        carte["INSEE_DEP"].astype(str).str.startswith("97")
+    ]
+
+    for cluster in clusters:
+
+        fig, axes = plt.subplots(
+            1, 2,
+            figsize=(22, 12),
+            gridspec_kw={"width_ratios": [3, 1]}
+        )
+
+        # Carte de la métropole
+        carte_metropole.plot(
+            column=cluster,
+            cmap="Blues",
+            legend=True,
+            edgecolor="black",
+            linewidth=0.4,
+            ax=axes[0]
+        )
+
+        axes[0].set_title(
+            f"France métropolitaine - Cluster {cluster}",
+            fontsize=16
+        )
+        axes[0].axis("off")
+
+        # Carte de l'outre-mer
+        carte_outremer.plot(
+            column=cluster,
+            cmap="Blues",
+            legend=False,
+            edgecolor="black",
+            linewidth=0.4,
+            ax=axes[1]
+        )
+
+        axes[1].set_title(
+            "Départements d'outre-mer",
+            fontsize=14
+        )
+        axes[1].axis("off")
+
+        plt.tight_layout()
+        plt.show()
