@@ -3,6 +3,7 @@ import geopandas as gpd
 import numpy as np
 import textwrap
 
+
 def plot_pib_regions(df):
     plt.figure(figsize=(12, 7))
     plt.bar(df["Région"], df["PIB_par_habitant"])
@@ -30,7 +31,7 @@ def plot_carte_pib(pib_carte):
     )
 
     fig, ax = plt.subplots(figsize=(16, 16))
-    carte.plot(column="PIB_par_habitant", legend=True)
+    carte.plot(column="PIB_par_habitant", legend=True, ax=ax)
     ax.set_title("PIB par habitant par région en 2023")
     ax.axis("off")
 
@@ -63,34 +64,43 @@ def plot_regression(df, modele, variable_explicative, variable_expliquee, titre)
 
 
 def plot_etats_financiers(etats_financier):
-    # Extract regions
-    regions = [row[0] for row in etats_financier[1:]]
 
-    # Extract financial data (correct column indexes)
-    dram = [row[1] for row in etats_financier[1:]]
-    fir = [row[9] for row in etats_financier[1:]]
-    decaissement = [row[11] for row in etats_financier[1:]]
-
-    sorted_data = sorted(
-        zip(regions, dram, fir, decaissement),
-        key=lambda row: row[1],
-        reverse=True
+    # Réorganiser les données : une ligne par région
+    tableau = etats_financier.pivot(
+        index="Région",
+        columns="Catégorie",
+        values="Montant 2023 (M€)"
     )
 
-    # Unpack sorted data
-    regions, dram, fir, decaissement = zip(*sorted_data)
+    # Récupérer les montants de chaque catégorie
+    dram = tableau["DEPENSES DES REGIMES D'ASSURANCE MALADIE (hors contribution aux dépenses des ESMS pour personnes âgées et handicapées)"]
+
+    fir = tableau["FONDS D'INTERVENTION REGIONAL (FIR)"]
+
+    decaissement = tableau["DEPENSES DES REGIMES D'ASSURANCE MALADIE ET DE LA CAISSE NATIONALE DE SOLIDARITE POUR L'AUTONOMIE (décaissements)"]
+
+    # Trier les régions selon les dépenses DRAM
+    tableau = tableau.sort_values(
+        by="DEPENSES DES REGIMES D'ASSURANCE MALADIE (hors contribution aux dépenses des ESMS pour personnes âgées et handicapées)",
+        ascending=False
+    )
+
+    # Mettre à jour les montants après le tri
+    dram = tableau["DEPENSES DES REGIMES D'ASSURANCE MALADIE (hors contribution aux dépenses des ESMS pour personnes âgées et handicapées)"]
+
+    fir = tableau["FONDS D'INTERVENTION REGIONAL (FIR)"]
+
+    decaissement = tableau["DEPENSES DES REGIMES D'ASSURANCE MALADIE ET DE LA CAISSE NATIONALE DE SOLIDARITE POUR L'AUTONOMIE (décaissements)"]
+
+    regions = tableau.index
 
     x = np.arange(len(regions))
     width = 0.2
 
     fig, ax = plt.subplots(figsize=(16, 8))
-
-    ax.bar(x - 1*width, dram, width, label="DEPENSES DES REGIMES D'ASSURANCE MALADIE")
+    ax.bar(x - width, dram, width, label="DRAM")
     ax.bar(x, fir, width, label="FIR")
-    ax.bar(
-        x + 1*width, decaissement, width,
-        label="DEPENSES DES REGIMES D'ASSURANCE MALADIE \
-        ET DE LA CAISSE NATIONALE DE SOLIDARITE POUR L'AUTONOMIE")
+    ax.bar(x + width, decaissement, width, label="CNSA (décaissements)")
 
     ax.set_xticks(x)
     ax.set_xticklabels(regions, rotation=45, ha="right")
@@ -102,8 +112,4 @@ def plot_etats_financiers(etats_financier):
     ax.grid(axis="y", alpha=0.3)
 
     fig.tight_layout()
-    # Save before closing
     plt.show()
-
-    plt.close(fig)
-
