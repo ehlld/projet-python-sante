@@ -81,6 +81,22 @@ def generate_etats_financiers_regionaux():
 
     return df_finances_regionales
 
+df_finances_regionales = generate_etats_financiers_regionaux()
+
+habitants_region = extract_habitants_region()
+
+df_finances_regionales = df_finances_regionales.merge(
+    habitants_region,
+    left_on="Région",
+    right_on="Nom de la région",
+    how="left")
+print (df_finances_regionales)
+
+df_finances_regionales = df_finances_regionales.drop(
+    columns=["Nom de la région"])
+
+print (df_finances_regionales)
+
     # name_of_columns = tableau_financier[0].columns
     # etats_financier_regionaux = []
     # tableau_temporaire = ["Region"]
