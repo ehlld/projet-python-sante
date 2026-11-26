@@ -251,14 +251,56 @@ def visualiser_clusters_carte(mco_selection):
 
 
 def afficher_repartition_clusters_departements(mco_selection):
+
+    # Nombre d'établissements par département et par cluster
     repartition_departements = mco_selection.groupby(
         ["Departement", "Cluster"]
     ).size().unstack(fill_value=0)
 
-    print("Répartition des établissements par département et par cluster")
+    # Nombre total d'établissements par département
+    total_departements = repartition_departements.sum(axis=1)
+
+    # Calcul des proportions par cluster
+    proportions_departements = repartition_departements.div(
+        total_departements,
+        axis=0
+    ) * 100
+
+    print("ANALYSE DE LA RÉPARTITION GÉOGRAPHIQUE DES CLUSTERS")
 
     for cluster in repartition_departements.columns:
-        print(f"\nDépartements les plus représentés dans le cluster {cluster}")
-        classement = ( repartition_departements[cluster].sort_values(ascending=False).head(5).reset_index())
-        classement.columns = ["Département", "Nombre d'établissements"]
-        display(classement)
+
+        print(f"\n--- Cluster {cluster} : départements les plus représentés en nombre ---")
+
+        classement_nombre = (
+            repartition_departements[cluster]
+            .sort_values(ascending=False)
+            .head(5)
+            .reset_index()
+        )
+
+        classement_nombre.columns = [
+            "Département",
+            "Nombre d'établissements"
+        ]
+
+        display(classement_nombre)
+
+        print(f"\n--- Cluster {cluster} : proportion dans les départements comptant au moins 5 établissements ---")
+
+        classement_proportion = (
+            proportions_departements.loc[total_departements >= 5, cluster]
+            .sort_values(ascending=False)
+            .head(5)
+            .reset_index()
+        )
+
+        classement_proportion.columns = [
+            "Département",
+            "Proportion dans le département (%)"
+        ]
+
+        classement_proportion["Proportion dans le département (%)"] = (
+            classement_proportion["Proportion dans le département (%)"].round(2)
+        )
+        display(classement_proportion)
