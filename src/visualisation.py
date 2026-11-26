@@ -4,6 +4,7 @@ import numpy as np
 import textwrap
 from cartiflette import carti_download
 from src import analyse_descriptive
+from IPython.display import display
 
 
 def plot_pib_regions(df):
@@ -248,3 +249,16 @@ def visualiser_clusters_carte(mco_selection):
         plt.tight_layout()
         plt.show()
 
+
+def afficher_repartition_clusters_departements(mco_selection):
+    repartition_departements = mco_selection.groupby(
+        ["Departement", "Cluster"]
+    ).size().unstack(fill_value=0)
+
+    print("Répartition des établissements par département et par cluster")
+
+    for cluster in repartition_departements.columns:
+        print(f"\nDépartements les plus représentés dans le cluster {cluster}")
+        classement = ( repartition_departements[cluster].sort_values(ascending=False).head(5).reset_index())
+        classement.columns = ["Département", "Nombre d'établissements"]
+        display(classement)

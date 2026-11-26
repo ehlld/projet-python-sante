@@ -81,9 +81,9 @@ def prepare_pib_map(pib_2023):
     return pib_carte
 
 
-def prepare_mco_data(mco):
+def prepare_mco_data(mco, var):
     # Sélection des variables utiles
-    variables = ["LIT_MCO", "JLI_MCO", "SEJHC_MCO", "JOU_MCO", "PLA_MCO", "SEJHP_MCO", "SEA_MCO"]
+    variables = var
     mco_selection = mco[variables].dropna()
 
     # Standardisation des données
