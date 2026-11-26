@@ -3,6 +3,7 @@ import geopandas as gpd
 import numpy as np
 import textwrap
 from cartiflette import carti_download
+from src import analyse_descriptive
 
 
 def plot_pib_regions(df):
@@ -13,6 +14,24 @@ def plot_pib_regions(df):
     plt.ylabel("PIB par habitant (€)")
 
     plt.xticks(rotation=75, ha="right")
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_moyenne_depenses_region(etats_financiers_regionaux):
+    moyenne_depenses_region = analyse_descriptive.moyenne_depenses_par_region(etats_financiers_regionaux)
+
+    plt.figure(figsize=(12, 6))
+
+    plt.bar(
+        moyenne_depenses_region["Région"],
+        moyenne_depenses_region["Montant 2023 (M€)"]
+    )
+
+    plt.title("Montant moyen des dépenses par région en 2023")
+    plt.xlabel("Région")
+    plt.ylabel("Montant moyen (M€)")
+    plt.xticks(rotation=90)
     plt.tight_layout()
     plt.show()
 
@@ -228,3 +247,4 @@ def visualiser_clusters_carte(mco_selection):
 
         plt.tight_layout()
         plt.show()
+
