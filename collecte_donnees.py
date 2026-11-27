@@ -81,19 +81,32 @@ def generate_etats_financiers_regionaux():
 
     return df_finances_regionales
 
-df_finances_regionales = generate_etats_financiers_regionaux()
 
-habitants_region = extract_habitants_region()
+def generate_finances_regionales():
+    df_finances_regionales = generate_etats_financiers_regionaux()
 
-df_finances_regionales = df_finances_regionales.merge(
-    habitants_region,
-    left_on="Région",
-    right_on="Nom de la région")
+    habitants_region = extract_habitants_region()
 
-df_finances_regionales = df_finances_regionales.drop(
-    columns=["Nom de la région"])
+    df_finances_regionales = df_finances_regionales.merge(
+        habitants_region,
+        left_on="Région",
+        right_on="Nom de la région")
 
-# print (df_finances_regionales)
+    df_finances_regionales = df_finances_regionales.drop(
+        columns=["Nom de la région"])
+
+    df_finances_regionales['ratio'] = df_finances_regionales["Montant 2023 (M€)"] * 1000 /\
+        df_finances_regionales["Population totale"]
+
+    # Réorganiser les données : une ligne par région
+    df_pivot = df_finances_regionales.pivot(
+        index="Région",
+        columns="Catégorie",
+        values="ratio"
+    )
+    return df_pivot
+
+
 
     # name_of_columns = tableau_financier[0].columns
     # etats_financier_regionaux = []

@@ -79,14 +79,7 @@ def plot_regression(df, modele, variable_explicative, variable_expliquee, titre)
     plt.show()
 
 
-def plot_etats_financiers(etats_financier):
-
-    # Réorganiser les données : une ligne par région
-    tableau = etats_financier.pivot(
-        index="Région",
-        columns="Catégorie",
-        values="Montant 2023 (M€)"
-    )
+def plot_etats_financiers(tableau):
 
     # Récupérer les montants de chaque catégorie
     dram = tableau["DEPENSES DES REGIMES D'ASSURANCE MALADIE (hors contribution aux dépenses des ESMS pour personnes âgées et handicapées)"]
@@ -121,7 +114,7 @@ def plot_etats_financiers(etats_financier):
     ax.set_xticks(x)
     ax.set_xticklabels(regions, rotation=45, ha="right")
 
-    ax.set_ylabel("Dépenses (en millions d'euros)")
+    ax.set_ylabel("Dépenses (en euro) par habitant")
     ax.set_title("Comparaison des dépenses par région")
 
     ax.legend()
