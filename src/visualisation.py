@@ -99,21 +99,7 @@ def plot_regression(df, modele, variable_explicative, variable_expliquee, titre)
     plt.show()
 
 
-def plot_etats_financiers(etats_financier):
-
-    # Réorganiser les données : une ligne par région
-    tableau = etats_financier.pivot(
-        index="Région",
-        columns="Catégorie",
-        values="Montant 2023 (M€)"
-    )
-
-    # Récupérer les montants de chaque catégorie
-    dram = tableau["DEPENSES DES REGIMES D'ASSURANCE MALADIE (hors contribution aux dépenses des ESMS pour personnes âgées et handicapées)"]
-
-    fir = tableau["FONDS D'INTERVENTION REGIONAL (FIR)"]
-
-    decaissement = tableau["DEPENSES DES REGIMES D'ASSURANCE MALADIE ET DE LA CAISSE NATIONALE DE SOLIDARITE POUR L'AUTONOMIE (décaissements)"]
+def plot_etats_financiers(tableau):
 
     # Trier les régions selon les dépenses DRAM
     tableau = tableau.sort_values(
@@ -141,10 +127,66 @@ def plot_etats_financiers(etats_financier):
     ax.set_xticks(x)
     ax.set_xticklabels(regions, rotation=45, ha="right")
 
-    ax.set_ylabel("Dépenses (en millions d'euros)")
+    ax.set_ylabel("Dépenses (en euro) par habitant")
     ax.set_title("Comparaison des dépenses par région")
 
     ax.legend()
+    ax.grid(axis="y", alpha=0.3)
+
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_mco(tableau):
+    tableau = tableau.sort_values(
+        by="ratio",
+        ascending=False
+    )
+
+    ratio = tableau["ratio"]
+
+    regions = tableau["Région"]
+
+    x = np.arange(len(regions))
+    width = 0.2
+
+    fig, ax = plt.subplots(figsize=(16, 8))
+    ax.bar(x, ratio, width)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(regions, rotation=45, ha="right")
+
+    ax.set_ylabel("Nombre de lits par habitant")
+    ax.set_title("Comparaison du nombre de lit par région")
+
+    ax.grid(axis="y", alpha=0.3)
+
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_pauvrete(tableau):
+    tableau = tableau.sort_values(
+        by="valeur",
+        ascending=False
+    )
+
+    valeur = tableau["valeur"]
+
+    regions = tableau["libelle_region"]
+
+    x = np.arange(len(regions))
+    width = 0.2
+
+    fig, ax = plt.subplots(figsize=(16, 8))
+    ax.bar(x, valeur, width)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(regions, rotation=45, ha="right")
+
+    ax.set_ylabel("taux de pauvreté (%)")
+    ax.set_title("taux de pauvreté par région")
+
     ax.grid(axis="y", alpha=0.3)
 
     fig.tight_layout()
@@ -260,7 +302,7 @@ def afficher_repartition_clusters_departements(mco_selection):
     # Nombre total d'établissements par département
     total_departements = repartition_departements.sum(axis=1)
 
-    # Calcul des proportions par cluster
+    # Proportion de chaque cluster dans chaque département
     proportions_departements = repartition_departements.div(
         total_departements,
         axis=0
@@ -270,7 +312,7 @@ def afficher_repartition_clusters_departements(mco_selection):
 
     for cluster in repartition_departements.columns:
 
-        print(f"\n--- Cluster {cluster} : départements les plus représentés en nombre ---")
+        print(f"\nCluster {cluster} : départements les plus représentés en nombre")
 
         classement_nombre = (
             repartition_departements[cluster]
@@ -286,7 +328,7 @@ def afficher_repartition_clusters_departements(mco_selection):
 
         display(classement_nombre)
 
-        print(f"\n--- Cluster {cluster} : proportion dans les départements comptant au moins 5 établissements ---")
+        print(f"Cluster {cluster} : proportion dans les départements comptant au moins 5 établissements")
 
         classement_proportion = (
             proportions_departements.loc[total_departements >= 5, cluster]
@@ -303,4 +345,5 @@ def afficher_repartition_clusters_departements(mco_selection):
         classement_proportion["Proportion dans le département (%)"] = (
             classement_proportion["Proportion dans le département (%)"].round(2)
         )
+
         display(classement_proportion)
