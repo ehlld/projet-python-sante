@@ -132,7 +132,6 @@ CORRESPONDANCE_DEPARTEMENT_REGION = [
 ]
 
 
-
 def insee_pib():
     url_pib_region = pd.ExcelFile(URL_PIB_REGIONS)
     pib_region_brut = pd.read_excel(
@@ -275,6 +274,7 @@ def extract_dictionnaire_sae():
     chemin = "/home/onyxia/work/projet-python-sante/data/SAE_2023/Liste_variables_SAE_2023.xlsx"
     dictionnaire = pd.read_excel(chemin, sheet_name=None)
     return dictionnaire
+
 
 def pauvrete():
     pauvrete_brut = pd.read_csv(URL_TAUX_PAUVRETE, sep=",", encoding="utf-8")
