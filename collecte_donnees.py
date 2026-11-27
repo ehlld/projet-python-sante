@@ -2,6 +2,10 @@ import pandas as pd
 import openpyxl as op
 
 
+URL_BASE_SAE = "data/SAE_2023/Liste_variables_SAE_2023.xlsx"
+
+URL_TAUX_PAUVRETE = "https://static.data.gouv.fr/resources/taux-de-pauvrete/20261104-151329/taux-de-pauvrete-region.csv"
+
 URL_HABITANTS_REGIONS = "https://www.insee.fr/fr/statistiques/fichier/8680726/ensemble.xlsx"
 
 URL_PIB_REGIONS = "https://www.insee.fr/fr/statistiques/fichier/8391986/PIB_REG_fr.xlsx"
@@ -125,16 +129,8 @@ CORRESPONDANCE_DEPARTEMENT_REGION = [
     ("93", "Île-de-France"),
     ("94", "Île-de-France"),
     ("95", "Île-de-France"),
-    ("971", "Guadeloupe"),
-    ("972", "Martinique"),
-    ("973", "Guyane"),
-    ("974", "La Réunion"),
-    ("976", "Mayotte")
 ]
 
-URL_BASE_SAE = "data/SAE_2023/Liste_variables_SAE_2023.xlsx"
-
-URL_TAUX_PAUVRETE = "https://www.insee.fr/fr/statistiques/fichier/7941411/RPM2024-F21.xlsx"
 
 
 def insee_pib():
@@ -248,6 +244,7 @@ def extract_mco_sae():
 
 def epure_mco():
     habitants_region = extract_habitants_region()
+
     mco_brut = extract_mco_sae()
     mco_epure = mco_brut[["FI", "LIT_MED"]].dropna()
     mco_epure["FI"] = mco_epure["FI"].str[:2]
@@ -279,4 +276,8 @@ def extract_dictionnaire_sae():
     dictionnaire = pd.read_excel(chemin, sheet_name=None)
     return dictionnaire
 
-print(epure_mco())
+def pauvrete():
+    pauvrete_brut = pd.read_csv(URL_TAUX_PAUVRETE, sep=",", encoding="utf-8")
+    pauvrete_epure = pauvrete_brut[["libelle_region", "valeur"]].dropna()
+    pauvrete_epure = pauvrete_epure[~pauvrete_epure["libelle_region"].isin(["La Réunion"])]
+    return pauvrete_epure

@@ -81,13 +81,6 @@ def plot_regression(df, modele, variable_explicative, variable_expliquee, titre)
 
 def plot_etats_financiers(tableau):
 
-    # Récupérer les montants de chaque catégorie
-    dram = tableau["DEPENSES DES REGIMES D'ASSURANCE MALADIE (hors contribution aux dépenses des ESMS pour personnes âgées et handicapées)"]
-
-    fir = tableau["FONDS D'INTERVENTION REGIONAL (FIR)"]
-
-    decaissement = tableau["DEPENSES DES REGIMES D'ASSURANCE MALADIE ET DE LA CAISSE NATIONALE DE SOLIDARITE POUR L'AUTONOMIE (décaissements)"]
-
     # Trier les régions selon les dépenses DRAM
     tableau = tableau.sort_values(
         by="DEPENSES DES REGIMES D'ASSURANCE MALADIE (hors contribution aux dépenses des ESMS pour personnes âgées et handicapées)",
@@ -118,6 +111,62 @@ def plot_etats_financiers(tableau):
     ax.set_title("Comparaison des dépenses par région")
 
     ax.legend()
+    ax.grid(axis="y", alpha=0.3)
+
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_mco(tableau):
+    tableau = tableau.sort_values(
+        by="ratio",
+        ascending=False
+    )
+
+    ratio = tableau["ratio"]
+
+    regions = tableau["Région"]
+
+    x = np.arange(len(regions))
+    width = 0.2
+
+    fig, ax = plt.subplots(figsize=(16, 8))
+    ax.bar(x, ratio, width)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(regions, rotation=45, ha="right")
+
+    ax.set_ylabel("Nombre de lits par habitant")
+    ax.set_title("Comparaison du nombre de lit par région")
+
+    ax.grid(axis="y", alpha=0.3)
+
+    fig.tight_layout()
+    plt.show()
+
+
+def plot_pauvrete(tableau):
+    tableau = tableau.sort_values(
+        by="valeur",
+        ascending=False
+    )
+
+    valeur = tableau["valeur"]
+
+    regions = tableau["libelle_region"]
+
+    x = np.arange(len(regions))
+    width = 0.2
+
+    fig, ax = plt.subplots(figsize=(16, 8))
+    ax.bar(x, valeur, width)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(regions, rotation=45, ha="right")
+
+    ax.set_ylabel("taux de pauvreté (%)")
+    ax.set_title("taux de pauvreté par région")
+
     ax.grid(axis="y", alpha=0.3)
 
     fig.tight_layout()
