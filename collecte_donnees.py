@@ -27,6 +27,111 @@ URL_REGIONS = {
     "Provence-Alpes-Côte d'Azur": "https://www.ars.sante.fr/media/161665/download?inline",
 }
 
+
+CORRESPONDANCE_DEPARTEMENT_REGION = [
+    ("01", "Auvergne-Rhône-Alpes"),
+    ("02", "Hauts-de-France"),
+    ("03", "Auvergne-Rhône-Alpes"),
+    ("04", "Provence-Alpes-Côte d'Azur"),
+    ("05", "Provence-Alpes-Côte d'Azur"),
+    ("06", "Provence-Alpes-Côte d'Azur"),
+    ("07", "Auvergne-Rhône-Alpes"),
+    ("08", "Grand Est"),
+    ("09", "Occitanie"),
+    ("10", "Grand Est"),
+    ("11", "Occitanie"),
+    ("12", "Occitanie"),
+    ("13", "Provence-Alpes-Côte d'Azur"),
+    ("14", "Normandie"),
+    ("15", "Auvergne-Rhône-Alpes"),
+    ("16", "Nouvelle-Aquitaine"),
+    ("17", "Nouvelle-Aquitaine"),
+    ("18", "Centre-Val de Loire"),
+    ("19", "Nouvelle-Aquitaine"),
+    ("2A", "Corse"),
+    ("2B", "Corse"),
+    ("21", "Bourgogne-Franche-Comté"),
+    ("22", "Bretagne"),
+    ("23", "Nouvelle-Aquitaine"),
+    ("24", "Nouvelle-Aquitaine"),
+    ("25", "Bourgogne-Franche-Comté"),
+    ("26", "Auvergne-Rhône-Alpes"),
+    ("27", "Normandie"),
+    ("28", "Centre-Val de Loire"),
+    ("29", "Bretagne"),
+    ("30", "Occitanie"),
+    ("31", "Occitanie"),
+    ("32", "Occitanie"),
+    ("33", "Nouvelle-Aquitaine"),
+    ("34", "Occitanie"),
+    ("35", "Bretagne"),
+    ("36", "Centre-Val de Loire"),
+    ("37", "Centre-Val de Loire"),
+    ("38", "Auvergne-Rhône-Alpes"),
+    ("39", "Bourgogne-Franche-Comté"),
+    ("40", "Nouvelle-Aquitaine"),
+    ("41", "Centre-Val de Loire"),
+    ("42", "Auvergne-Rhône-Alpes"),
+    ("43", "Auvergne-Rhône-Alpes"),
+    ("44", "Pays de la Loire"),
+    ("45", "Centre-Val de Loire"),
+    ("46", "Occitanie"),
+    ("47", "Nouvelle-Aquitaine"),
+    ("48", "Occitanie"),
+    ("49", "Pays de la Loire"),
+    ("50", "Normandie"),
+    ("51", "Grand Est"),
+    ("52", "Grand Est"),
+    ("53", "Pays de la Loire"),
+    ("54", "Grand Est"),
+    ("55", "Grand Est"),
+    ("56", "Bretagne"),
+    ("57", "Grand Est"),
+    ("58", "Bourgogne-Franche-Comté"),
+    ("59", "Hauts-de-France"),
+    ("60", "Hauts-de-France"),
+    ("61", "Normandie"),
+    ("62", "Hauts-de-France"),
+    ("63", "Auvergne-Rhône-Alpes"),
+    ("64", "Nouvelle-Aquitaine"),
+    ("65", "Occitanie"),
+    ("66", "Occitanie"),
+    ("67", "Grand Est"),
+    ("68", "Grand Est"),
+    ("69", "Auvergne-Rhône-Alpes"),
+    ("70", "Bourgogne-Franche-Comté"),
+    ("71", "Bourgogne-Franche-Comté"),
+    ("72", "Pays de la Loire"),
+    ("73", "Auvergne-Rhône-Alpes"),
+    ("74", "Auvergne-Rhône-Alpes"),
+    ("75", "Île-de-France"),
+    ("76", "Normandie"),
+    ("77", "Île-de-France"),
+    ("78", "Île-de-France"),
+    ("79", "Nouvelle-Aquitaine"),
+    ("80", "Hauts-de-France"),
+    ("81", "Occitanie"),
+    ("82", "Occitanie"),
+    ("83", "Provence-Alpes-Côte d'Azur"),
+    ("84", "Provence-Alpes-Côte d'Azur"),
+    ("85", "Pays de la Loire"),
+    ("86", "Nouvelle-Aquitaine"),
+    ("87", "Nouvelle-Aquitaine"),
+    ("88", "Grand Est"),
+    ("89", "Bourgogne-Franche-Comté"),
+    ("90", "Bourgogne-Franche-Comté"),
+    ("91", "Île-de-France"),
+    ("92", "Île-de-France"),
+    ("93", "Île-de-France"),
+    ("94", "Île-de-France"),
+    ("95", "Île-de-France"),
+    ("971", "Guadeloupe"),
+    ("972", "Martinique"),
+    ("973", "Guyane"),
+    ("974", "La Réunion"),
+    ("976", "Mayotte")
+]
+
 URL_BASE_SAE = "data/SAE_2023/Liste_variables_SAE_2023.xlsx"
 
 URL_TAUX_PAUVRETE = "https://www.insee.fr/fr/statistiques/fichier/7941411/RPM2024-F21.xlsx"
@@ -71,7 +176,8 @@ def extract_habitants_region():
         "Régions",
         header=7)
 
-    habitants_region_epure = habitants_region_brut[["Nom de la région", "Population totale"]]
+    habitants_region_epure = habitants_region_brut[["Nom de la région", "Population totale"]]\
+        .rename(columns={"Nom de la région": "Région"})
     return habitants_region_epure
 
 
@@ -86,14 +192,9 @@ def generate_finances_regionales():
     df_finances_regionales = generate_etats_financiers_regionaux()
 
     habitants_region = extract_habitants_region()
-
     df_finances_regionales = df_finances_regionales.merge(
         habitants_region,
-        left_on="Région",
-        right_on="Nom de la région")
-
-    df_finances_regionales = df_finances_regionales.drop(
-        columns=["Nom de la région"])
+        on="Région")
 
     df_finances_regionales['ratio'] = df_finances_regionales["Montant 2023 (M€)"] * 1000 /\
         df_finances_regionales["Population totale"]
@@ -105,7 +206,6 @@ def generate_finances_regionales():
         values="ratio"
     )
     return df_pivot
-
 
 
     # name_of_columns = tableau_financier[0].columns
@@ -141,12 +241,42 @@ def extract_pib_brut():
 
 
 def extract_mco_sae():
-    chemin = "data/SAE_2023/MCO_2023r.csv"
+    chemin = "/home/onyxia/work/projet-python-sante/data/SAE_2023/MCO_2023r.csv"
     mco = pd.read_csv(chemin, sep=";", encoding="latin-1")
     return mco
 
 
+def epure_mco():
+    habitants_region = extract_habitants_region()
+    mco_brut = extract_mco_sae()
+    mco_epure = mco_brut[["FI", "LIT_MED"]].dropna()
+    mco_epure["FI"] = mco_epure["FI"].str[:2]
+    df_correspondance = pd.DataFrame(
+        CORRESPONDANCE_DEPARTEMENT_REGION,
+        columns=["Code_departement", "Région"]
+    )
+    mco_epure = mco_epure.rename(columns={"FI": "Code_departement"})
+    df_correspondance["Code_departement"] = df_correspondance["Code_departement"].astype(str)
+    mco_region = mco_epure.merge(
+        df_correspondance,
+        on="Code_departement",
+    ).drop(columns="Code_departement")
+    mco_fusion_instances_region = (
+        mco_region.groupby("Région", as_index=False)
+        ["LIT_MED"]
+        .sum()
+    )
+    mco_nombre_habitants = mco_fusion_instances_region.merge(
+        habitants_region,
+        on="Région")
+    mco_nombre_habitants['ratio'] = mco_nombre_habitants["LIT_MED"] /\
+        mco_nombre_habitants["Population totale"]
+    return mco_nombre_habitants
+
+
 def extract_dictionnaire_sae():
-    chemin = "data/SAE_2023/Liste_variables_SAE_2023.xlsx"
+    chemin = "/home/onyxia/work/projet-python-sante/data/SAE_2023/Liste_variables_SAE_2023.xlsx"
     dictionnaire = pd.read_excel(chemin, sheet_name=None)
     return dictionnaire
+
+print(epure_mco())
