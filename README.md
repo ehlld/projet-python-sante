@@ -1,4 +1,4 @@
-#projet-python-sante
+# Impact du niveau de richesse des régions sur le financement des structures hospitalières
 
 ## Objectif du projet
 Ce projet vise à étudier les liens entre le niveau de richesse des régions de France et ses ressources hospitalières et à comparer les différentes régions.
